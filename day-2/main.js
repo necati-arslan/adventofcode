@@ -4,36 +4,52 @@ const data = fs.readFileSync("./data.txt", "utf-8").split("\n");
 
 const resultArray = [];
 
-let array = [
-  "Game 81: 1 red, 12 green, 2 blue; 4 red, 12 green, 10 blue; 2 red, 9 blue, 12 green; 10 blue, 12 green",
-  "Game 82: 4 blue, 3 green; 2 green, 3 blue; 4 blue, 2 red, 2 green; 2 red, 1 green",
-];
+let array = data;
 
 const controlParams = { red: 12, green: 13, blue: 14 };
+const gamePassed = [];
 
 // Kontrol fonksiyonu
 function shouldDelete(element) {
-  const elements = element.split(";");
+  const GameElements = element.split(":");
+  console.log(GameElements[1]);
+  let counts = GameElements[1].split(";").flatMap((item) =>
+    item
+      .trim()
+      .split(",")
+      .map((entry) => entry.trim())
+  );
+  //console.log(counts);
+  for (let j = 0; j < counts.length; j++) {
+    const count = parseInt(counts[j]);
+    const color = counts[j].split(" ")[1];
+    console.log(color);
+    console.log(count);
 
-  for (let i = 0; i < elements.length; i++) {
-    const counts = elements[i].split(",").map((item) => {
-      return item.trim().split(" ")[0];
-    });
-
-    for (let j = 0; j < counts.length; j++) {
-      const count = parseInt(counts[j]);
-      const color = counts[j].split(" ")[1];
-
-      if (controlParams[color] && count > controlParams[color]) {
-        return true;
-      }
+    if (count > controlParams[color]) {
+      return false;
     }
   }
+  return true;
+}
 
-  return false;
+function sumGame(elements) {
+  const total = [];
+  elements.forEach((element) => {
+    const GameElements = element.split(":");
+    let number = GameElements[0].match(/\d+/)[0];
+    total.push(number);
+  });
+  console.log(total);
+  const sum = total.reduce((a, b) => {
+    return +a + +b;
+  }, 0);
+  return sum;
 }
 
 // Elemanları kontrol et ve koşullara uyanları sil
 array = array.filter((item) => shouldDelete(item));
-
 console.log(array);
+
+const result = sumGame(array);
+console.log(result);
